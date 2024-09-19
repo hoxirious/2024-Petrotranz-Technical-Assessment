@@ -31,5 +31,6 @@ class Program
         string[] topWords2 = businessAnalyst1.GetTenMostFrequencies(file2, true);
         Console.WriteLine("Top 10 most frequent words:");
         foreach (var word in topWords2) Console.WriteLine(word);
-    }
+
+}
 }

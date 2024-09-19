@@ -1,13 +1,14 @@
 using System.Text.RegularExpressions;
 using HelperDomain;
+using System.Linq;
 
 namespace BusinessAnalystDomain
 {
     public class BusinessAnalyst
     {
         // Assumptions:
-        // - if result's length < 10, return all
-        // - only take alphabetic words
+        // - If result's length < 10, return all
+        // - Only take alphabetic words
         public string[] GetTenMostFrequencies(string input, bool isFilePath)
         {
             if (isFilePath)
@@ -23,27 +24,31 @@ namespace BusinessAnalystDomain
 
             Regex regex = new Regex("[^a-zA-Z]");
 
+            // Create frequencies map
             foreach (string word in words)
             {
                 string newWord = regex.Replace(word, "").ToLower();
+
                 if (string.IsNullOrWhiteSpace(newWord)) continue;
+
                 if (freqMap.ContainsKey(newWord)) freqMap[newWord]++;
                 else freqMap[newWord] = 1;
             }
 
-            PriorityQueue<string, int> top10 = new PriorityQueue<string, int>();
-
+            PriorityQueue<string, int> pq = new PriorityQueue<string, int>();
+            // Get 10 most occurent words
             foreach (var entry in freqMap)
             {
-                top10.Enqueue(entry.Key, entry.Value);
+                pq.Enqueue(entry.Key, entry.Value);
 
-                if (top10.Count > 10) top10.Dequeue();
+                if (pq.Count > 10) pq.Dequeue();
             }
 
+            // Return result
             List<string> result = new List<string>();
-            while (top10.Count > 0)
+            while (pq.Count > 0)
             {
-                result.Add(top10.Dequeue());
+                result.Add(pq.Dequeue());
             }
 
             result.Reverse();

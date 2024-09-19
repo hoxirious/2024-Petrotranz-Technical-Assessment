@@ -17,7 +17,7 @@ namespace StudentDomain
         {
             string extractedText = "";
             if(filePath.Length > 0){
-                extractedText = Helper.ReadAllText(filePath);
+                extractedText = Helper.ReadAllText(filePath).Trim();
             }
 
             int wordCount = extractedText.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
@@ -39,7 +39,7 @@ namespace StudentDomain
         // - Get exact word
         public int GetWordOccurence(string target, string filePath)
         {
-            string extractedText = File.ReadAllText(filePath);
+            string extractedText = Helper.ReadAllText(filePath);
             string[] words = extractedText.Split(new[] {' ', '\r', '\n', ',', '.', ';', ':', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
             return words.Count(word => word.Equals(target, StringComparison.OrdinalIgnoreCase));
         }
