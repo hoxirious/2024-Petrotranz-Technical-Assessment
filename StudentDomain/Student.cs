@@ -1,3 +1,4 @@
+using HelperDomain;
 namespace StudentDomain
 {
 
@@ -10,15 +11,21 @@ namespace StudentDomain
     public class Student
     {
 
-        // Assuming the character does not include space
-        public static TextStatistic countWords(string filePath)
+        // Assumptions:
+        // - Character does not include space
+        public TextStatistic CountWords(string filePath)
         {
-            string extractedText = File.ReadAllText(filePath);
+            string extractedText = "";
+            if(filePath.Length > 0){
+                extractedText = Helper.ReadAllText(filePath);
+            }
 
             int wordCount = extractedText.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
-            int numSpace = wordCount - 1;
-            int charCount = extractedText.Length - numSpace;
 
+            // number of deliminator equals to number of words - 1
+            int numSpace = wordCount - 1;
+
+            int charCount = extractedText.Length - numSpace;
 
             return new TextStatistic
             {
@@ -28,10 +35,12 @@ namespace StudentDomain
         }
 
         // Search a word, return occurence;
-        public static int getWordOccurence(string target, string filePath)
+        // Assumption:
+        // - Get exact word
+        public int GetWordOccurence(string target, string filePath)
         {
             string extractedText = File.ReadAllText(filePath);
-            string[] words = extractedText.Split(new[] { ' ', '\r', '\n', ',', '.', ';', ':', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] words = extractedText.Split(new[] {' ', '\r', '\n', ',', '.', ';', ':', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
             return words.Count(word => word.Equals(target, StringComparison.OrdinalIgnoreCase));
         }
     }
