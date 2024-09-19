@@ -1,43 +1,59 @@
 using System.Text.RegularExpressions;
+using HelperDomain;
+using System.Linq;
 
 namespace BusinessAnalystDomain
 {
     public class BusinessAnalyst
     {
-        // Assumption: if result's length < 10, return all
-        public static string[] getTenMostFrequencies(string filePath)
+        // Assumptions:
+        // - If result's length < 10, return all
+        // - Only take alphabetic words
+        public string[] GetTenMostFrequencies(string input, bool isFilePath)
         {
+            if (isFilePath)
+                input = HelperDomain.Helper.ReadAllText(input);
+            return Execute(input);
+        }
 
-            string extractedText = File.ReadAllText(filePath);
-            string[] words = extractedText.Split(new[] { ' ', '\r', '\n', ',', '.', ';', ':', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
+        private string[] Execute(string text)
+        {
+            string[] words = text.Split(new[] { ' ', '\r', '\n', ',', '.', ';', ':', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
 
             Dictionary<string, int> freqMap = new Dictionary<string, int>();
+
             Regex regex = new Regex("[^a-zA-Z]");
-            // Todo: ignore special characters;
+
+            // Create frequencies map
             foreach (string word in words)
             {
-                string lowerCase = regex.Replace(word, "").ToLower();
-                if (string.IsNullOrWhiteSpace(lowerCase)) continue;
-                if (freqMap.ContainsKey(lowerCase)) freqMap[lowerCase]++;
-                else freqMap[lowerCase] = 1;
+                string newWord = regex.Replace(word, "").ToLower();
+
+                if (string.IsNullOrWhiteSpace(newWord)) continue;
+
+                if (freqMap.ContainsKey(newWord)) freqMap[newWord]++;
+                else freqMap[newWord] = 1;
             }
 
-            PriorityQueue<string, int> top10 = new PriorityQueue<string, int>();
-
+            PriorityQueue<string, int> pq = new PriorityQueue<string, int>();
+            // Get 10 most occurent words
             foreach (var entry in freqMap)
             {
-                top10.Enqueue(entry.Key, entry.Value);
+                pq.Enqueue(entry.Key, entry.Value);
 
-                if (top10.Count > 10) top10.Dequeue();
+                if (pq.Count > 10) pq.Dequeue();
             }
+
+            // Return result
             List<string> result = new List<string>();
-            while (top10.Count > 0)
+            while (pq.Count > 0)
             {
-                result.Add(top10.Dequeue());
+                result.Add(pq.Dequeue());
             }
 
             result.Reverse();
             return result.ToArray();
+
         }
     }
 }
